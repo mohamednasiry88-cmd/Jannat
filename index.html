@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Jannat | جنات - تواصل بأناقة وأمان</title>
+  <link rel="manifest" href="./manifest.json" />
+  <meta name="theme-color" content="#C59B27" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Jannat" />
+  <link rel="apple-touch-icon" href="./icons/icon-192x192.png" />
+  <link rel="icon" type="image/png" href="./icons/icon-192x192.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --gold: #C59B27;
+      --gold-dark: #9E7816;
+      --gold-light: #E8C65C;
+      --gold-soft: rgba(197, 155, 39, 0.14);
+      --bg-main: #FAF6EE;
+      --bg-card: #FFFFFF;
+      --bg-chat: #F4EFE4;
+      --bg-bubble-in: #FFFFFF;
+      --bg-bubble-out: #F3E5B8;
+      --text-main: #1C1915;
+      --text-muted: #6E6557;
+      --border: #E6DEC8;
+      --header-bg: #1A1712;
+      --header-text: #FAF6EE;
+      --shadow: 0 8px 24px rgba(26, 23, 18, 0.08);
+    }
+    body.dark {
+      --bg-main: #12100D;
+      --bg-card: #1B1813;
+      --bg-chat: #15130F;
+      --bg-bubble-in: #231F18;
+      --bg-bubble-out: #3B2F12;
+      --text-main: #F7F3EA;
+      --text-muted: #A69C8A;
+      --border: #2E2920;
+      --header-bg: #0D0B09;
+      --header-text: #F7F3EA;
+      --shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; -webkit-tap-highlight-color: transparent; }
+    body { background: var(--bg-main); color: var(--text-main); height: 100dvh; overflow: hidden; display: flex; justify-content: center; }
+    .app-shell { width: 100%; max-width: 1120px; height: 100dvh; background: var(--bg-card); display: flex; flex-direction: column; position: relative; box-shadow: var(--shadow); border-inline: 1px solid var(--border); }
+
+    /* Auth / Phone Registration Screen */
+    .auth-screen { position: absolute; inset: 0; z-index: 50; background: var(--bg-main); display: flex; align-items: center; justify-content: center; padding: 20px; overflow-y: auto; }
+    .auth-card { width: 100%; max-width: 420px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 24px; padding: 28px 24px; box-shadow: var(--shadow); text-align: center; }
+    .crown-logo { width: 74px; height: 74px; margin: 0 auto 14px; border-radius: 50%; background: #1A1712; border: 2px solid var(--gold); display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 18px rgba(197, 155, 39, 0.28); }
+    .auth-title { font-size: 26px; font-weight: 800; color: var(--gold-dark); }
+    body.dark .auth-title { color: var(--gold-light); }
+    .auth-sub { font-size: 13.5px; color: var(--text-muted); margin-top: 4px; margin-bottom: 22px; }
+    .field-group { text-align: right; margin-bottom: 14px; }
+    .field-label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 6px; color: var(--text-main); }
+    .phone-row { display: flex; gap: 8px; direction: ltr; }
+    .input-box, .select-box { width: 100%; padding: 12px 14px; border-radius: 14px; border: 1.5px solid var(--border); background: var(--bg-main); color: var(--text-main); font-size: 15px; outline: none; transition: 0.2s; }
+    .input-box:focus, .select-box:focus { border-color: var(--gold); }
+    .select-box { width: 118px; flex-shrink: 0; font-weight: 700; }
+    .account-type-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+    .type-option { border: 1.5px solid var(--border); border-radius: 14px; padding: 10px; cursor: pointer; text-align: center; transition: 0.2s; background: var(--bg-main); }
+    .type-option.active { border-color: var(--gold); background: var(--gold-soft); }
+    .type-option strong { display: block; font-size: 13.5px; }
+    .type-option span { font-size: 11.5px; color: var(--text-muted); }
+    .btn-gold { width: 100%; padding: 13px; border: none; border-radius: 14px; background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: #fff; font-size: 15.5px; font-weight: 700; cursor: pointer; box-shadow: 0 6px 16px rgba(197, 155, 39, 0.3); transition: 0.2s; }
+    .btn-gold:active { transform: scale(0.98); }
+    .otp-hint { font-size: 12px; color: var(--gold-dark); background: var(--gold-soft); padding: 8px 12px; border-radius: 10px; margin-bottom: 12px; }
+    body.dark .otp-hint { color: var(--gold-light); }
+
+    /* Top Header */
+    .top-bar { background: var(--header-bg); color: var(--header-text); padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(197, 155, 39, 0.28); }
+    .brand-wrap { display: flex; align-items: center; gap: 10px; }
+    .brand-badge { width: 38px; height: 38px; border-radius: 50%; border: 1.5px solid var(--gold); display: flex; align-items: center; justify-content: center; background: #221E17; }
+    .brand-name { font-size: 19px; font-weight: 800; color: var(--gold-light); line-height: 1.1; }
+    .brand-tag { font-size: 11px; color: #C9BFA8; display: flex; align-items: center; gap: 5px; }
+    .biz-pill { background: var(--gold); color: #1A1712; font-size: 10px; font-weight: 800; padding: 1px 7px; border-radius: 99px; }
+    .top-actions { display: flex; align-items: center; gap: 8px; }
+    .icon-btn { background: rgba(255,255,255,0.08); border: 1px solid rgba(197,155,39,0.25); color: var(--gold-light); width: 36px; height: 36px; border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 16px; }
+    .install-chip { background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: #fff; border: none; padding: 7px 12px; border-radius: 12px; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 5px; }
+
+    /* Main Layout */
+    .main-area { flex: 1; display: flex; overflow: hidden; }
+    .sidebar { width: 360px; max-width: 100%; border-inline-end: 1px solid var(--border); display: flex; flex-direction: column; background: var(--bg-card); }
+    .nav-tabs { display: grid; grid-template-columns: repeat(4, 1fr); border-bottom: 1px solid var(--border); background: var(--bg-main); }
+    .nav-tab { padding: 10px 4px; text-align: center; font-size: 12.5px; font-weight: 700; color: var(--text-muted); cursor: pointer; border-bottom: 2.5px solid transparent; }
+    .nav-tab.active { color: var(--gold-dark); border-bottom-color: var(--gold); background: var(--bg-card); }
+    body.dark .nav-tab.active { color: var(--gold-light); }
+    .search-wrap { padding: 10px 12px; border-bottom: 1px solid var(--border); }
+    .search-input { width: 100%; padding: 9px 14px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg-main); color: var(--text-main); font-size: 13.5px; outline: none; }
+    .list-scroll { flex: 1; overflow-y: auto; }
+
+    /* Chat Item */
+    .chat-row { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-bottom: 1px solid var(--border); cursor: pointer; transition: 0.15s; }
+    .chat-row:hover, .chat-row.active { background: var(--gold-soft); }
+    .avatar { width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, #2B251B, #1A1712); border: 1.5px solid var(--gold); color: var(--gold-light); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 17px; flex-shrink: 0; position: relative; }
+    .online-dot { width: 11px; height: 11px; border-radius: 50%; background: #22C55E; border: 2px solid var(--bg-card); position: absolute; bottom: 1px; left: 1px; }
+    .chat-meta { flex: 1; min-width: 0; }
+    .chat-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px; }
+    .chat-name { font-size: 14.5px; font-weight: 700; display: flex; align-items: center; gap: 5px; }
+    .verified-tick { color: var(--gold); font-size: 13px; }
+    .chat-time { font-size: 11px; color: var(--text-muted); }
+    .chat-preview { font-size: 12.5px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .unread-badge { background: var(--gold); color: #fff; font-size: 11px; font-weight: 700; min-width: 20px; height: 20px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; padding: 0 6px; }
+
+    /* Chat Pane */
+    .chat-pane { flex: 1; display: flex; flex-direction: column; background: var(--bg-chat); position: relative; }
+    .chat-header { background: var(--bg-card); padding: 10px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .back-btn { display: none; background: none; border: none; color: var(--gold-dark); font-size: 20px; font-weight: 800; cursor: pointer; margin-left: 8px; }
+    body.dark .back-btn { color: var(--gold-light); }
+    .messages-box { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+    .msg { max-width: 78%; padding: 10px 14px; border-radius: 16px; font-size: 14px; line-height: 1.5; position: relative; box-shadow: 0 2px 6px rgba(0,0,0,0.04); }
+    .msg.in { align-self: flex-start; background: var(--bg-bubble-in); border: 1px solid var(--border); border-top-right-radius: 4px; }
+    .msg.out { align-self: flex-end; background: var(--bg-bubble-out); border: 1px solid rgba(197, 155, 39, 0.35); border-top-left-radius: 4px; }
+    .msg-foot { display: flex; justify-content: flex-end; align-items: center; gap: 4px; font-size: 10.5px; color: var(--text-muted); margin-top: 4px; }
+    .composer { background: var(--bg-card); padding: 10px 12px; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
+    .composer input { flex: 1; padding: 11px 14px; border-radius: 14px; border: 1px solid var(--border); background: var(--bg-main); color: var(--text-main); font-size: 14px; outline: none; }
+    .send-btn { background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: #fff; border: none; padding: 11px 18px; border-radius: 14px; font-weight: 700; cursor: pointer; }
+
+    /* Cards inside tabs */
+    .panel-card { margin: 12px; padding: 14px; border-radius: 16px; background: var(--bg-main); border: 1px solid var(--border); }
+    .panel-card h4 { font-size: 14.5px; color: var(--gold-dark); margin-bottom: 6px; }
+    body.dark .panel-card h4 { color: var(--gold-light); }
+    .panel-card p { font-size: 12.5px; color: var(--text-muted); line-height: 1.6; }
+    .biz-feature { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px dashed var(--border); font-size: 13px; }
+    .biz-feature:last-child { border-bottom: none; }
+
+    /* Modal */
+    .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 60; display: none; align-items: center; justify-content: center; padding: 16px; }
+    .modal-backdrop.open { display: flex; }
+    .modal-box { width: 100%; max-width: 420px; background: var(--bg-card); border: 1px solid var(--gold); border-radius: 22px; padding: 22px; box-shadow: var(--shadow); }
+    .modal-box h3 { font-size: 18px; color: var(--gold-dark); margin-bottom: 10px; }
+    body.dark .modal-box h3 { color: var(--gold-light); }
+    .modal-step { font-size: 13px; margin-bottom: 8px; line-height: 1.6; color: var(--text-main); }
+
+    @media (max-width: 768px) {
+      .sidebar { width: 100%; }
+      .chat-pane { position: fixed; inset: 0; z-index: 30; transform: translateX(-100%); transition: transform 0.25s ease; }
+      .chat-pane.mobile-open { transform: translateX(0); }
+      .back-btn { display: inline-block; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <!-- Phone Registration Screen -->
+    <div id="authScreen" class="auth-screen">
+      <div class="auth-card">
+        <div class="crown-logo">
+          <svg width="38" height="38" viewBox="0 0 24 24" fill="#C59B27">
+            <path d="M3 18h18v2H3v-2zm0-11l4.5 4L12 5l4.5 6L21 7l-1.5 9h-15L3 7z"/>
+          </svg>
+        </div>
+        <div class="auth-title">Jannat • جنات</div>
+        <div class="auth-sub">منصة المراسلة الفورية الفاخرة للأفراد والأعمال</div>
+
+        <div id="stepPhone">
+          <div class="field-group">
+            <label class="field-label">نوع الحساب</label>
+            <div class="account-type-grid">
+              <div class="type-option active" id="optPersonal" onclick="selectAccountType('personal')">
+                <strong>حساب شخصي</strong>
+                <span>تواصل يومي سريع وآمن</span>
+              </div>
+              <div class="type-option" id="optBusiness" onclick="selectAccountType('business')">
+                <strong>Jannat Business 👑</strong>
+                <span>كتالوج وردود آلية وتوثيق</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">الاسم الكامل أو اسم النشاط</label>
+            <input id="regName" class="input-box" type="text" placeholder="مثال: عبد اللطيف أو متجر جنات" />
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">رقم الهاتف الرسمي</label>
+            <div class="phone-row">
+              <select id="regCode" class="select-box">
+                <option value="+212">🇲🇦 +212</option>
+                <option value="+966">🇸🇦 +966</option>
+                <option value="+971">🇦🇪 +971</option>
+                <option value="+213">🇩🇿 +213</option>
+                <option value="+216">🇹🇳 +216</option>
+                <option value="+33">🇫🇷 +33</option>
+              </select>
+              <input id="regPhone" class="input-box" type="tel" placeholder="6XXXXXXXX" />
+            </div>
+          </div>
+
+          <button class="btn-gold" onclick="sendOtp()">إرسال رمز التحقق SMS</button>
+        </div>
+
+        <div id="stepOtp" style="display:none;">
+          <div class="otp-hint" id="otpDisplayHint">تم إرسال رمز التحقق إلى رقمك</div>
+          <div class="field-group">
+            <label class="field-label">أدخل رمز التحقق (6 أرقام)</label>
+            <input id="otpInput" class="input-box" type="text" maxlength="6" placeholder="123456" style="text-align:center; letter-spacing:6px; font-weight:800;" />
+          </div>
+          <button class="btn-gold" onclick="verifyOtp()">تأكيد والدخول إلى جنات</button>
+          <p style="margin-top:12px; font-size:12.5px; color:var(--text-muted); cursor:pointer;" onclick="resetAuthStep()">تغيير رقم الهاتف</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top Header -->
+    <header class="top-bar">
+      <div class="brand-wrap">
+        <div class="brand-badge">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="#E8C65C">
+            <path d="M3 18h18v2H3v-2zm0-11l4.5 4L12 5l4.5 6L21 7l-1.5 9h-15L3 7z"/>
+          </svg>
+        </div>
+        <div>
+          <div class="brand-name">Jannat</div>
+          <div class="brand-tag">
+            <span id="userDisplayTag">جنات للمراسلة</span>
+            <span id="bizBadgeTop" class="biz-pill" style="display:none;">BUSINESS</span>
+          </div>
+        </div>
+      </div>
+      <div class="top-actions">
+        <button id="installBtn" class="install-chip" onclick="triggerInstall()">📲 تثبيت التطبيق</button>
+        <button class="icon-btn" title="الوضع الليلي/النهاري" onclick="toggleTheme()">🌓</button>
+        <button class="icon-btn" title="محادثة جديدة" onclick="addNewContactPrompt()">➕</button>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="main-area">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="nav-tabs">
+          <div class="nav-tab active" data-tab="chats" onclick="switchTab('chats')">المحادثات</div>
+          <div class="nav-tab" data-tab="status" onclick="switchTab('status')">الحالات</div>
+          <div class="nav-tab" data-tab="business" onclick="switchTab('business')">الأعمال 👑</div>
+          <div class="nav-tab" data-tab="settings" onclick="switchTab('settings')">حسابي</div>
+        </div>
+
+        <div class="search-wrap" id="searchBarWrap">
+          <input id="searchInput" class="search-input" type="text" placeholder="ابحث بالاسم أو رقم الهاتف..." oninput="renderSidebar()" />
+        </div>
+
+        <div class="list-scroll" id="sidebarContent"></div>
+      </aside>
+
+      <!-- Active Chat Pane -->
+      <section class="chat-pane" id="chatPane">
+        <div class="chat-header">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <button class="back-btn" onclick="closeMobileChat()">→</button>
+            <div class="avatar" id="activeAvatar">ج</div>
+            <div>
+              <div class="chat-name" id="activeName">فريق جنات الرسمي <span class="verified-tick">✔</span></div>
+              <div style="font-size:11.5px; color:var(--text-muted);" id="activeStatus">متصل الآن • مشفر بالكامل</div>
+            </div>
+          </div>
+          <div style="display:flex; gap:6px;">
+            <button class="icon-btn" style="color:var(--gold-dark); border-color:var(--border);" onclick="simulateCall('صوتية')">📞</button>
+            <button class="icon-btn" style="color:var(--gold-dark); border-color:var(--border);" onclick="simulateCall('فيديو')">📹</button>
+          </div>
+        </div>
+
+        <div class="messages-box" id="messagesBox"></div>
+
+        <form class="composer" onsubmit="sendMessage(event)">
+          <input id="msgInput" type="text" placeholder="اكتب رسالتك في جنات..." autocomplete="off" />
+          <button type="submit" class="send-btn">إرسال</button>
+        </form>
+      </section>
+    </div>
+  </div>
+
+  <!-- Install Guide Modal -->
+  <div id="installModal" class="modal-backdrop" onclick="if(event.target===this) closeInstallModal()">
+    <div class="modal-box">
+      <h3>📲 تثبيت تطبيق Jannat على هاتفك</h3>
+      <p class="modal-step"><strong>على هواتف Android (Chrome):</strong><br/>اضغط على القائمة <strong>(⋮)</strong> في أعلى المتصفح ثم اختر <strong>"تثبيت التطبيق" (Install App)</strong> ليظهر بأيقونة التاج الذهبي على شاشتك.</p>
+      <p class="modal-step"><strong>على هواتف iPhone (Safari):</strong><br/>اضغط على زر المشاركة <strong>(⬆️)</strong> في الأسفل ثم اختر <strong>"إضافة إلى الشاشة الرئيسية" (Add to Home Screen)</strong>.</p>
+      <button class="btn-gold" style="margin-top:10px;" onclick="closeInstallModal()">فهمت</button>
+    </div>
+  </div>
+
+  <script>
+    // Register Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./service-worker.js').catch(() => {});
+      });
+    }
+
+    let deferredPrompt = null;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+    });
+
+    function triggerInstall() {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(() => { deferredPrompt = null; });
+      } else {
+        document.getElementById('installModal').classList.add('open');
+      }
+    }
+    function closeInstallModal() {
+      document.getElementById('installModal').classList.remove('open');
+    }
+
+    // App State
+    let selectedRegType = 'personal';
+    let generatedOtp = '';
+    let currentTab = 'chats';
+    let activeChatId = 'official';
+
+    const defaultChats = [
+      {
+        id: 'official',
+        name: 'فريق جنات الرسمي',
+        phone: '+212 600-000001',
+        verified: true,
+        online: true,
+        unread: 0,
+        status: 'مرحباً بك في الجيل الجديد من التواصل الذهبي ✨',
+        messages: [
+          { from: 'in', text: 'أهلاً بك في تطبيق Jannat (جنات) الرسمي! حسابك مفعل برقم هاتفك وجاهز للاستخدام.', time: '10:00' },
+          { from: 'in', text: 'يمكنك الترقية في أي وقت إلى Jannat Business لإدارة طلباتك وعملائك باحترافية.', time: '10:01' }
+        ]
+      },
+      {
+        id: 'c2',
+        name: 'سارة المنصوري',
+        phone: '+212 661-234567',
+        verified: false,
+        online: true,
+        unread: 2,
+        status: 'الحمد لله دائماً وأبداً 🌿',
+        messages: [
+          { from: 'in', text: 'السلام عليكم، واش التطبيق الجديد Jannat خدام عندك مزيان؟', time: '14:20' },
+          { from: 'in', text: 'التصميم الذهبي ديالو أنيق بزاف وسريع!', time: '14:21' }
+        ]
+      },
+      {
+        id: 'c3',
+        name: 'نوري سناك - Norisnak',
+        phone: '+212 662-987654',
+        verified: true,
+        online: true,
+        unread: 0,
+        status: 'حساب أعمال موثق • سوشي، بيتزا وطاكوس 🍣',
+        messages: [
+          { from: 'in', text: 'مرحباً بك في حساب الأعمال على جنات! كيفاش نقدر نعاونك اليوم؟', time: 'أمس' }
+        ]
+      }
+    ];
+
+    let userProfile = JSON.parse(localStorage.getItem('jannat_user') || 'null');
+    let chats = JSON.parse(localStorage.getItem('jannat_chats') || 'null') || defaultChats;
+
+    function saveState() {
+      if (userProfile) localStorage.setItem('jannat_user', JSON.stringify(userProfile));
+      localStorage.setItem('jannat_chats', JSON.stringify(chats));
+    }
+
+    function selectAccountType(type) {
+      selectedRegType = type;
+      document.getElementById('optPersonal').classList.toggle('active', type === 'personal');
+      document.getElementById('optBusiness').classList.toggle('active', type === 'business');
+    }
+
+    function sendOtp() {
+      const name = document.getElementById('regName').value.trim();
+      const code = document.getElementById('regCode').value;
+      const phone = document.getElementById('regPhone').value.trim();
+      if (!name || phone.length < 6) {
+        alert('المرجو إدخال الاسم ورقم الهاتف الصحيح.');
+        return;
+      }
+      generatedOtp = String(Math.floor(100000 + Math.random() * 900000));
+      document.getElementById('stepPhone').style.display = 'none';
+      document.getElementById('stepOtp').style.display = 'block';
+      document.getElementById('otpDisplayHint').innerHTML = `رمز التحقق التجريبي للرقم <strong>${code} ${phone}</strong> هو: <strong>${generatedOtp}</strong>`;
+      document.getElementById('otpInput').value = generatedOtp;
+    }
+
+    function resetAuthStep() {
+      document.getElementById('stepPhone').style.display = 'block';
+      document.getElementById('stepOtp').style.display = 'none';
+    }
+
+    function verifyOtp() {
+      const entered = document.getElementById('otpInput').value.trim();
+      if (entered !== generatedOtp) {
+        alert('رمز التحقق غير صحيح.');
+        return;
+      }
+      userProfile = {
+        name: document.getElementById('regName').value.trim(),
+        phone: document.getElementById('regCode').value + ' ' + document.getElementById('regPhone').value.trim(),
+        type: selectedRegType,
+        autoReply: 'مرحباً! شكراً لتواصلك معنا عبر Jannat Business، سنرد عليك في أقرب وقت.'
+      };
+      saveState();
+      initApp();
+    }
+
+    function initApp() {
+      if (!userProfile) return;
+      document.getElementById('authScreen').style.display = 'none';
+      document.getElementById('userDisplayTag').textContent = userProfile.name + ' • ' + userProfile.phone;
+      document.getElementById('bizBadgeTop').style.display = userProfile.type === 'business' ? 'inline-block' : 'none';
+      renderSidebar();
+      openChat(activeChatId, false);
+    }
+
+    function switchTab(tab) {
+      currentTab = tab;
+      document.querySelectorAll('.nav-tab').forEach(el => el.classList.toggle('active', el.dataset.tab === tab));
+      document.getElementById('searchBarWrap').style.display = tab === 'chats' ? 'block' : 'none';
+      renderSidebar();
+    }
+
+    function renderSidebar() {
+      const container = document.getElementById('sidebarContent');
+      if (currentTab === 'chats') {
+        const q = document.getElementById('searchInput').value.trim().toLowerCase();
+        const filtered = chats.filter(c => c.name.toLowerCase().includes(q) || c.phone.includes(q));
+        container.innerHTML = filtered.map(c => {
+          const last = c.messages[c.messages.length - 1] || { text: '', time: '' };
+          return `
+            <div class="chat-row ${c.id === activeChatId ? 'active' : ''}" onclick="openChat('${c.id}', true)">
+              <div class="avatar">
+                ${c.name.charAt(0)}
+                ${c.online ? '<span class="online-dot"></span>' : ''}
+              </div>
+              <div class="chat-meta">
+                <div class="chat-top">
+                  <div class="chat-name">${c.name} ${c.verified ? '<span class="verified-tick">✔</span>' : ''}</div>
+                  <div class="chat-time">${last.time}</div>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+                  <div class="chat-preview">${last.text}</div>
+                  ${c.unread ? `<span class="unread-badge">${c.unread}</span>` : ''}
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      } else if (currentTab === 'status') {
+        container.innerHTML = `
+          <div class="panel-card">
+            <h4>✨ حالتي على جنات</h4>
+            <p>${userProfile.name} (${userProfile.phone}) — متاح للتواصل</p>
+          </div>
+          ${chats.map(c => `
+            <div class="chat-row" onclick="openChat('${c.id}', true)">
+              <div class="avatar">${c.name.charAt(0)}</div>
+              <div class="chat-meta">
+                <div class="chat-name">${c.name}</div>
+                <div class="chat-preview">${c.status}</div>
+              </div>
+            </div>
+          `).join('')}
+        `;
+      } else if (currentTab === 'business') {
+        const isBiz = userProfile.type === 'business';
+        container.innerHTML = `
+          <div class="panel-card">
+            <h4>👑 Jannat Business</h4>
+            <p>${isBiz ? 'حسابك مفعل كحساب أعمال رسمي بشعار التوثيق الذهبي.' : 'طور حسابك الشخصي إلى حساب أعمال مجاناً للحصول على أدوات التجارة وخدمة العملاء.'}</p>
+            <button class="btn-gold" style="margin-top:12px;" onclick="toggleBusinessMode()">
+              ${isBiz ? 'الرجوع للحساب الشخصي' : 'ترقية حسابي إلى Jannat Business'}
+            </button>
+          </div>
+          <div class="panel-card">
+            <h4>أدوات الأعمال الجاهزة</h4>
+            <div class="biz-feature"><span>شارة التوثيق الذهبية</span><strong>${isBiz ? 'مفعلة ✔' : 'متاحة عند الترقية'}</strong></div>
+            <div class="biz-feature"><span>الرد التلقائي على العملاء</span><strong>${isBiz ? 'مفعل ✔' : 'غير مفعل'}</strong></div>
+            <div class="biz-feature"><span>كتالوج المنتجات والطلبات</span><strong>جاهز للربط</strong></div>
+          </div>
+        `;
+      } else if (currentTab === 'settings') {
+        container.innerHTML = `
+          <div class="panel-card">
+            <h4>معلومات الحساب المسجل</h4>
+            <p><strong>الاسم:</strong> ${userProfile.name}</p>
+            <p><strong>رقم الهاتف:</strong> ${userProfile.phone}</p>
+            <p><strong>نوع الحساب:</strong> ${userProfile.type === 'business' ? 'Jannat Business 👑' : 'حساب شخصي'}</p>
+          </div>
+          <div class="panel-card">
+            <h4>تثبيت ومشاركة التطبيق</h4>
+            <p>يمكن لأي شخص تثبيت التطبيق مباشرة على هاتفه بدون متجر عبر زر التثبيت في الأعلى.</p>
+            <button class="btn-gold" style="margin-top:10px;" onclick="triggerInstall()">📲 تثبيت التطبيق الآن</button>
+            <button style="margin-top:10px; width:100%; padding:10px; border-radius:12px; border:1px solid #DC2626; background:transparent; color:#DC2626; font-weight:700; cursor:pointer;" onclick="logoutAccount()">تسجيل الخروج وتغيير الرقم</button>
+          </div>
+        `;
+      }
+    }
+
+    function openChat(id, mobileSlide) {
+      activeChatId = id;
+      const chat = chats.find(c => c.id === id);
+      if (!chat) return;
+      chat.unread = 0;
+      saveState();
+      renderSidebar();
+
+      document.getElementById('activeAvatar').textContent = chat.name.charAt(0);
+      document.getElementById('activeName').innerHTML = `${chat.name} ${chat.verified ? '<span class="verified-tick">✔</span>' : ''}`;
+      document.getElementById('activeStatus').textContent = `${chat.phone} • ${chat.online ? 'متصل الآن' : 'آخر ظهور قريباً'}`;
+
+      const box = document.getElementById('messagesBox');
+      box.innerHTML = chat.messages.map(m => `
+        <div class="msg ${m.from}">
+          <div>${m.text}</div>
+          <div class="msg-foot">${m.time} ${m.from === 'out' ? '✓✓' : ''}</div>
+        </div>
+      `).join('');
+      box.scrollTop = box.scrollHeight;
+
+      if (mobileSlide) {
+        document.getElementById('chatPane').classList.add('mobile-open');
+      }
+    }
+
+    function closeMobileChat() {
+      document.getElementById('chatPane').classList.remove('mobile-open');
+    }
+
+    function sendMessage(e) {
+      e.preventDefault();
+      const input = document.getElementById('msgInput');
+      const text = input.value.trim();
+      if (!text) return;
+
+      const chat = chats.find(c => c.id === activeChatId);
+      const now = new Date();
+      const timeStr = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+
+      chat.messages.push({ from: 'out', text, time: timeStr });
+      input.value = '';
+      saveState();
+      openChat(activeChatId, false);
+
+      setTimeout(() => {
+        const reply = chat.id === 'official'
+          ? 'تم استلام رسالتك بنجاح في نظام جنات. نحن هنا لدعمك دائماً ✨'
+          : 'وصلت رسالتك على تطبيق Jannat! شكراً لتواصلك.';
+        chat.messages.push({ from: 'in', text: reply, time: timeStr });
+        saveState();
+        if (activeChatId === chat.id) openChat(chat.id, false);
+        else { chat.unread++; renderSidebar(); }
+      }, 900);
+    }
+
+    function addNewContactPrompt() {
+      const name = prompt('أدخل اسم جهة الاتصال الجديدة:');
+      if (!name) return;
+      const phone = prompt('أدخل رقم الهاتف (مثال: +212 6XXXXXXXX):', '+212 6');
+      if (!phone) return;
+      const newChat = {
+        id: 'c_' + Date.now(),
+        name: name.trim(),
+        phone: phone.trim(),
+        verified: false,
+        online: true,
+        unread: 0,
+        status: 'متاح على جنات',
+        messages: [{ from: 'in', text: `مرحباً! أنا ${name.trim()} على تطبيق Jannat.`, time: 'الآن' }]
+      };
+      chats.unshift(newChat);
+      saveState();
+      switchTab('chats');
+      openChat(newChat.id, true);
+    }
+
+    function toggleBusinessMode() {
+      userProfile.type = userProfile.type === 'business' ? 'personal' : 'business';
+      saveState();
+      initApp();
+      switchTab('business');
+    }
+
+    function toggleTheme() {
+      document.body.classList.toggle('dark');
+    }
+
+    function simulateCall(type) {
+      const chat = chats.find(c => c.id === activeChatId);
+      alert(`جاري بدء مكالمة ${type} مشفرة عبر Jannat مع ${chat.name}...`);
+    }
+
+    function logoutAccount() {
+      localStorage.removeItem('jannat_user');
+      location.reload();
+    }
+
+    if (userProfile) initApp();
+  </script>
+</body>
+</html>
